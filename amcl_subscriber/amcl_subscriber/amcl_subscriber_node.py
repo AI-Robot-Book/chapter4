@@ -44,6 +44,3 @@ def main(args=None):
     rclpy.spin(amcl_subscriber)                                                                           
     amcl_subscriber.destory_node()                                                                        
     rclpy.shutdown()                                                                                    
-                                                                                                        
-if __name__ == '__main__':                                                                              
-    main()      
