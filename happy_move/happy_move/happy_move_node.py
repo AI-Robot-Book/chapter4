@@ -4,7 +4,7 @@ import rclpy
 import tf_transformations
 from rclpy.node import Node   
 from rclpy.executors import ExternalShutdownException    
-from geometry_msgs.msg import Twist  # Twist メッセージ型をインポート
+from geometry_msgs.msg import Twist  # Twistメッセージ型をインポート
 from nav_msgs.msg import Odometry
 from tf_transformations import euler_from_quaternion
 
