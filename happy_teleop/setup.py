@@ -21,7 +21,6 @@ setup(
     entry_points={
         'console_scripts': [
             'happy_teleop_node = happy_teleop.happy_teleop_node:main',
-            'happy_subscriber_node = happy_teleop.happy_subscriber_node:main',
         ],
     },
 )

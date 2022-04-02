@@ -1,3 +1,4 @@
+import sys
 import rclpy                        
 from rclpy.node import Node          
 from geometry_msgs.msg import Twist  # Twist メッセージ型をインポート
@@ -39,7 +40,7 @@ def main():  # main関数
         rclpy.spin(node)
     except KeyboardInterrupt:
         print('Ctrl+Cが押されました．')
+    except ExternalShutdownException:
+        sys.exit(1)
     finally:
-        node.destroy_node()
-        rclpy.shutdown()
-    rclpy.shutdown()
+        rclpy.try_shutdown()    
