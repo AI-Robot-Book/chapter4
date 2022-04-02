@@ -34,7 +34,7 @@ class HappyMove(Node):  # 簡単な移動クラス
             (q_x, q_y, q_z, q_w))
         return x, y, yaw
   
-    def odom_cb(self, msg):         # ODOMのコールバック関数
+    def odom_cb(self, msg):         # オドメトリのコールバック関数
         self.x, self.y, self.yaw = self.get_pose(msg)
         self.get_logger().info(
             f'x={self.x: .2f} y={self.y: .2f}[m] yaw={self.yaw: .2f}[rad/s]')     
@@ -64,15 +64,14 @@ class HappyMove(Node):  # 簡単な移動クラス
             return True
 
     def timer_callback(self):  # タイマーのコールバック関数
-        self.pub.publish(self.vel)  # 速度指令メッセージのパブリッシュ
- 
+        self.pub.publish(self.vel)  # 速度指令メッセージのパブリッシュ 
+        
+    def happy_move(self): # 簡単な状態遷移
         state = 0
-        print('移動中...')
         while rclpy.ok():
             if state == 0:
                 if self.move_distance(self.distance):
                     state = 1
-                    print('回転中...')
             elif state == 1:                
                 if self.rotate_angle(self.angle):
                     state = 2
