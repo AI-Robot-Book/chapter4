@@ -9,7 +9,7 @@ from nav_msgs.msg import Odometry
 from tf_transformations import euler_from_quaternion
 
 
-class HappyMove(Node):  # キー操作により速度指令値をパブリッシュするクラス
+class HappyMove(Node):  # 簡単な移動クラス
     def __init__(self):   # コンストラクタ
         super().__init__('happy_move_node')        
         self.pub = self.create_publisher(Twist, 'cmd_vel', 10)
@@ -23,7 +23,7 @@ class HappyMove(Node):  # キー操作により速度指令値をパブリッシ
         self.distance = 2.0  # [m]
         self.angle = math.pi/2  # [rad]
  
-    def get_pose(self, msg):      # 姿勢の取得
+    def get_pose(self, msg):      # 姿勢を取得する
         x = msg.pose.pose.position.x
         y = msg.pose.pose.position.y
         q_x = msg.pose.pose.orientation.x
@@ -39,11 +39,11 @@ class HappyMove(Node):  # キー操作により速度指令値をパブリッシ
         self.get_logger().info(
             f'x={self.x: .2f} y={self.y: .2f}[m] yaw={self.yaw: .2f}[rad/s]')     
     
-    def set_vel(self, linear, angular):
+    def set_vel(self, linear, angular):　# 速度を設定する
         self.vel.linear.x = linear   # [m/s]
         self.vel.angular.z = angular  # [rad/s]    
     
-    def move_distance(self, distance):
+    def move_distance(self, distance):  # 指定した距離を移動する
         error = 0.05  # [m] 
         diff = distance - math.sqrt((self.x - self.x0) ** 2 + (self.y - self.y0) ** 2)
         if diff > error:
@@ -53,9 +53,9 @@ class HappyMove(Node):  # キー操作により速度指令値をパブリッシ
             self.set_vel(0.0, 0.0)
             return True
 
-    def rotate_angle(self, angle):
+    def rotate_angle(self, angle):  # 指定した角度を回転する
         error = 0.1
-        diff = 1.0  # change this line
+        diff = 1.0  # この行を変更して正しく動くようにする
         if diff > error:
             self.set_vel(0.0, 0.25)
             return False
@@ -66,14 +66,13 @@ class HappyMove(Node):  # キー操作により速度指令値をパブリッシ
     def timer_callback(self):  # タイマーのコールバック関数
         self.pub.publish(self.vel)  # 速度指令メッセージのパブリッシュ
  
-    def happy_move(self):
         state = 0
-        print('moving...')
+        print('移動中...')
         while rclpy.ok():
             if state == 0:
                 if self.move_distance(self.distance):
                     state = 1
-                    print('rotating...')
+                    print('回転中...')
             elif state == 1:                
                 if self.rotate_angle(self.angle):
                     state = 2
@@ -81,7 +80,7 @@ class HappyMove(Node):  # キー操作により速度指令値をパブリッシ
             elif state == 2:
                 break
             else:
-                print('Invalid state')
+                print('エラー状態')
             rclpy.spin_once(self)
 
 
