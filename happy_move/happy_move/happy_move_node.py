@@ -39,7 +39,7 @@ class HappyMove(Node):  # 簡単な移動クラス
         self.get_logger().info(
             f'x={self.x: .2f} y={self.y: .2f}[m] yaw={self.yaw: .2f}[rad/s]')     
     
-    def set_vel(self, linear, angular):　# 速度を設定する
+    def set_vel(self, linear, angular):  # 速度を設定する
         self.vel.linear.x = linear   # [m/s]
         self.vel.angular.z = angular  # [rad/s]    
     
