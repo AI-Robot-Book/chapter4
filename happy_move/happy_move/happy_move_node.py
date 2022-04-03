@@ -5,8 +5,8 @@ import tf_transformations
 from rclpy.node import Node   
 from rclpy.executors import ExternalShutdownException    
 from geometry_msgs.msg import Twist  # Twistメッセージ型をインポート
-from nav_msgs.msg import Odometry
-from tf_transformations import euler_from_quaternion
+from nav_msgs.msg import Odometry    # Odometryメッセージ型をインポート
+from tf_transformations import euler_from_quaternion 
 
 
 class HappyMove(Node):  # 簡単な移動クラス
@@ -18,10 +18,8 @@ class HappyMove(Node):  # 簡単な移動クラス
         self.x, self.y, self.yaw = 0.0, 0.0, 0.0
         self.x0, self.y0, self.yaw0 = 0.0, 0.0, 0.0
         self.vel = Twist()  # Twist メッセージ型インスタンスの生成
-        self.vel.linear.x = 0.0   # [m/s]
-        self.vel.angular.z = 0.0  # [rad/s]
-        self.distance = 2.0  # [m]
         self.angle = math.pi/2  # [rad]
+        self.set_vel(0.0, 0.0) # 速度の初期化
  
     def get_pose(self, msg):      # 姿勢を取得する
         x = msg.pose.pose.position.x
@@ -43,25 +41,19 @@ class HappyMove(Node):  # 簡単な移動クラス
         self.vel.linear.x = linear   # [m/s]
         self.vel.angular.z = angular  # [rad/s]    
     
-    def move_distance(self, distance):  # 指定した距離を移動する
-        error = 0.05  # [m] 
-        diff = distance - math.sqrt((self.x - self.x0) ** 2 + (self.y - self.y0) ** 2)
-        if diff > error:
+    def move_distance(self, dist):  # 指定した距離distを移動する
+        error = 0.05  # 許容誤差 [m] 
+        if math.fabs(diff) > error:
             self.set_vel(0.25, 0.0)
             return False
         else:
             self.set_vel(0.0, 0.0)
             return True
 
-    def rotate_angle(self, angle):  # 指定した角度を回転する
-        error = 0.1
-        diff = 1.0  # この行を変更して正しく動くようにする
-        if diff > error:
-            self.set_vel(0.0, 0.25)
-            return False
-        else:
-            self.set_vel(0.0, 0.0)
-            return True
+    def rotate_angle(self, angle):  # 指定した角度angleを回転する
+        # このメソッドは間違っています．move_distanceを参考に完成させてください．
+        self.set_vel(0.0, 0.25)
+        return False
 
     def timer_callback(self):  # タイマーのコールバック関数
         self.pub.publish(self.vel)  # 速度指令メッセージのパブリッシュ 
@@ -74,9 +66,7 @@ class HappyMove(Node):  # 簡単な移動クラス
                     state = 1
             elif state == 1:                
                 if self.rotate_angle(self.angle):
-                    state = 2
-            elif state == 2:
-                break
+                    break
             else:
                 print('エラー状態')
             rclpy.spin_once(self)
