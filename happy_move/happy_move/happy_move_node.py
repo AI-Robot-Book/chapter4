@@ -75,7 +75,6 @@ class HappyMove(Node):  # 簡単な移動クラス
             elif state == 1:                
                 if self.rotate_angle(self.angle):
                     state = 2
-                    print('end')
             elif state == 2:
                 break
             else:
