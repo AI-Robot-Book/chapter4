@@ -18,8 +18,7 @@ class HappyMove(Node):  # 簡単な移動クラス
         self.x, self.y, self.yaw = 0.0, 0.0, 0.0
         self.x0, self.y0, self.yaw0 = 0.0, 0.0, 0.0
         self.vel = Twist()  # Twist メッセージ型インスタンスの生成
-        self.angle = math.pi/2  # [rad]
-        self.set_vel(0.0, 0.0) # 速度の初期化
+        self.set_vel(0.0, 0.0)  # 速度の初期化
  
     def get_pose(self, msg):      # 姿勢を取得する
         x = msg.pose.pose.position.x
@@ -43,6 +42,7 @@ class HappyMove(Node):  # 簡単な移動クラス
     
     def move_distance(self, dist):  # 指定した距離distを移動する
         error = 0.05  # 許容誤差 [m] 
+        diff = dist - math.sqrt((self.x-self.x0)**2 + (self.y-self.y0)**2) 
         if math.fabs(diff) > error:
             self.set_vel(0.25, 0.0)
             return False
@@ -58,14 +58,14 @@ class HappyMove(Node):  # 簡単な移動クラス
     def timer_callback(self):  # タイマーのコールバック関数
         self.pub.publish(self.vel)  # 速度指令メッセージのパブリッシュ 
         
-    def happy_move(self): # 簡単な状態遷移
+    def happy_move(self,  distance, angle):  # 簡単な状態遷移
         state = 0
         while rclpy.ok():
             if state == 0:
-                if self.move_distance(self.distance):
+                if self.move_distance(distance):
                     state = 1
             elif state == 1:                
-                if self.rotate_angle(self.angle):
+                if self.rotate_angle(angle):
                     break
             else:
                 print('エラー状態')
@@ -77,7 +77,7 @@ def main(args=None):  # main関数
     node = HappyMove()
 
     try:
-        node.happy_move()
+        node.happy_move(2.0, math.pi/2)
     except KeyboardInterrupt:
         print('Ctrl+Cが押されました．')     
     except ExternalShutdownException:
