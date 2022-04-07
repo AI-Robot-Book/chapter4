@@ -18,11 +18,11 @@ def main():
         g.walls = DIAGRAM1_WALLS
         parents = breadth_first_search(g, start, goal)
     elif sys.argv[1] == 'dijkstra':
-        g = GridWithWeight(30,15)
+        g = GridWithWeights(30,15)
         g.walls = DIAGRAM1_WALLS
         parents = dijkstra_search(g, start, goal)       
     elif sys.argv[1] == 'astar':
-        g = GridWithWeight(30,15)
+        g = GridWithWeights(30,15)
         g.walls = DIAGRAM1_WALLS
         parents = a_star_search(g, start, goal)
     else:
