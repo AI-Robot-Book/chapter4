@@ -17,7 +17,6 @@ from typing import Protocol, Dict, List, Iterator, Tuple, TypeVar, Optional
 import numpy as np
 import matplotlib.pyplot as plt
 import queue
-import heapq
 import time
 
 
@@ -48,10 +47,10 @@ def draw_grid2(graph, **style):
     max_val = 10
 
     map = np.random.randint(0, 1, size=(graph.height, graph.width))
-    map[0,0]=0 
-    map[graph.height-1,graph.width-1]=0
+    map[0, 0] = 0 
+    map[graph.height-1, graph.width-1] = 0
 
-    fig, ax = plt.subplots(figsize=(8,8))
+    fig, ax = plt.subplots(figsize=(8, 8))
     fig.subplots_adjust(bottom=0.15)
     ax.set_title(style['title'], pad = 30, fontname='TakaoGothic')
     bad_value = 1000
@@ -83,7 +82,6 @@ def draw_grid2(graph, **style):
     cmap.set_over('red')      # vmaxより値が大きい格子は赤色
     cmap.set_bad('pink')      # bad_valueの格子はピンク 
     ax.matshow(masked_array, cmap=plt.cm.Blues, vmin=0, vmax=127)
-
     			
     plt.show()
 # 借用終わり
@@ -272,7 +270,7 @@ def dijkstra_search(graph, start, goal):
     
     return visited, cost_so_far
 
-    
+
 def a_star_search(graph:WeightedGraph, start, goal):
     frontier = queue.PriorityQueue()
     frontier.put(start, 0)
