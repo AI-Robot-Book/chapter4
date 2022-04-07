@@ -13,6 +13,8 @@ from typing import Protocol, Dict, List, Iterator, Tuple, TypeVar, Optional
 from implementation import *
 import numpy as np
 import matplotlib.pyplot as plt
+import collections
+import heapq
 
 
 #def draw_grid2(graph, point_to, start, goal, min_val=0, max_val=10):
@@ -52,10 +54,10 @@ def draw_grid2(graph, **style):
     cmap.set_over('red')      # vmaxより値が大きい格子は赤色
     cmap.set_bad('pink')      # bad_valueの格子はピンク 
     ax.matshow(masked_array, cmap=plt.cm.Blues, vmin=0, vmax=127)
-
     			
     plt.show()
 # 借用終わり
+
 
 # draw_titleを変更　by demu
 def draw_tile2(graph, id, style):
@@ -74,21 +76,12 @@ def draw_tile2(graph, id, style):
     if id in graph.walls: r = "#"
     return r
 
-
-
-
-
-
-
-
-
-
-
 T = TypeVar('T')
 
 Location = TypeVar('Location')
 class Graph(Protocol):
-    def neighbors(self, id: Location) -> List[Location]: pass
+    def neighbors(self, id: Location) -> List[Location]: 
+	pass
 
 class SimpleGraph:
     def __init__(self):
@@ -107,8 +100,6 @@ example_graph.edges = {
     'F': [],
 }
 
-import collections
-
 class Queue:
     def __init__(self):
         self.elements = collections.deque()
@@ -126,6 +117,7 @@ class Queue:
 def from_id_width(id, width):
     return (id % width, id // width)
 
+
 def draw_tile(graph, id, style):
     r = " . "
     if 'number' in style and id in style['number']: r = " %-2d" % style['number'][id]
@@ -141,6 +133,7 @@ def draw_tile(graph, id, style):
     if 'goal' in style and id == style['goal']:   r = "G"
     if id in graph.walls: r = "#"
     return r
+
 
 def draw_grid(graph, **style):
     print("___" * graph.width)
@@ -198,7 +191,7 @@ diagram4.weights = {loc: 5 for loc in [(3, 4), (3, 5), (4, 1), (4, 2),
                                        (6, 4), (6, 5), (6, 6), (6, 7),
                                        (7, 3), (7, 4), (7, 5)]}
 
-import heapq
+
 
 class PriorityQueue:
     def __init__(self):
@@ -212,6 +205,7 @@ class PriorityQueue:
     
     def get(self) -> T:
         return heapq.heappop(self.elements)[1]
+
 
 def dijkstra_search(graph: WeightedGraph, start: Location, goal: Location):
     frontier = PriorityQueue()
@@ -239,7 +233,6 @@ def dijkstra_search(graph: WeightedGraph, start: Location, goal: Location):
 
 # thanks to @m1sp <Jaiden Mispy> for this simpler version of
 # reconstruct_path that doesn't have duplicate entries
-
 def reconstruct_path(came_from: Dict[Location, Location],
                      start: Location, goal: Location) -> List[Location]:
     current: Location = goal
@@ -251,10 +244,12 @@ def reconstruct_path(came_from: Dict[Location, Location],
     path.reverse() # optional
     return path
 
+
 def heuristic(a: GridLocation, b: GridLocation) -> float:
     (x1, y1) = a
     (x2, y2) = b
     return abs(x1 - x2) + abs(y1 - y2)
+
 
 def a_star_search(graph: WeightedGraph, start: Location, goal: Location):
     frontier = PriorityQueue()
@@ -280,6 +275,7 @@ def a_star_search(graph: WeightedGraph, start: Location, goal: Location):
     
     return came_from, cost_so_far
 
+
 def breadth_first_search(graph: Graph, start: Location, goal: Location):
     frontier = Queue()
     frontier.put(start)
@@ -299,6 +295,7 @@ def breadth_first_search(graph: Graph, start: Location, goal: Location):
     
     return came_from
 
+
 class SquareGridNeighborOrder(SquareGrid):
     def neighbors(self, id):
         (x, y) = id
@@ -306,6 +303,7 @@ class SquareGridNeighborOrder(SquareGrid):
         results = filter(self.in_bounds, neighbors)
         results = filter(self.passable, results)
         return list(results)
+
 
 def test_with_custom_order(neighbor_order):
     if neighbor_order:
@@ -319,6 +317,7 @@ def test_with_custom_order(neighbor_order):
     draw_grid(g, path=reconstruct_path(came_from, start=start, goal=goal),
               point_to=came_from, start=start, goal=goal)
 
+	
 class GridWithAdjustedWeights(GridWithWeights):
     def cost(self, from_node, to_node):
         prev_cost = super().cost(from_node, to_node)
@@ -329,8 +328,10 @@ class GridWithAdjustedWeights(GridWithWeights):
         if (x1 + y1) % 2 == 1 and y2 != y1: nudge = 1
         return prev_cost + 0.001 * nudge
 
+
 def main():
-    print("Implementatin.py")
+    print("Implementation2.py")
+
 
 if __name__ == "__main__":
     main()
