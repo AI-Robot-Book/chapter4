@@ -17,7 +17,7 @@ if len(sys.argv) != 2:
     print('使い方: python3 search.py 1 または 2 または 3')
     sys.exit(1)
 
-method = sys.argv[1]  # BFS:1, Dijkstra:2, A*:3
+method = int(sys.argv[1])  # BFS:1, Dijkstra:2, A*:3
 
 if method == 1:
     # BFS
