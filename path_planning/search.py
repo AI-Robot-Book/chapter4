@@ -30,7 +30,7 @@ elif method == 3:
     # A*
     search, cost_so_far  = a_star_search(g, start, goal)
     title = 'A*アルゴリズム'
- else
+ else:
     print('使い方: python3 search.py 1 または 2 または 3')
     sys.exit(1)
 
