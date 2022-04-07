@@ -23,16 +23,14 @@ import queue
 def draw_grid2(graph, **style):
     min_val = 0
     max_val = 10
-    # print("graph width=",graph.width,"height=",graph.height)
-    # print("title", style['title'])
-	
+
     map = np.random.randint(0, 1, size=(graph.height, graph.width))
     map[0,0]=0 
     map[graph.height-1,graph.width-1]=0
 
     fig, ax = plt.subplots(figsize=(8,8))
     fig.subplots_adjust(bottom=0.15)
-    ax.set_title(style['title'], pad = 30)
+    ax.set_title(style['title'], pad = 30, fontname='takao')
     bad_value = 1000
     for j in range(graph.height):
         for i in range(graph.width):
