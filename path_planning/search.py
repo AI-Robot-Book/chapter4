@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 from implementation2 import *
 
 def main():
-    g = SquareGrid(30,15)
-    g.walls = DIAGRAM1_WALLS
+  
 
     start = (8,7)
     goal  = (17,2)
@@ -15,10 +14,16 @@ def main():
         sys.exit(1)
 
     if sys.argv[1] == 'bfs':
+        g = SquareGrid(30,15)
+        g.walls = DIAGRAM1_WALLS
         parents = breadth_first_search(g, start, goal)
     elif sys.argv[1] == 'dijkstra':
+        g = GridWithWeight(30,15)
+        g.walls = DIAGRAM1_WALLS
         parents = dijkstra_search(g, start, goal)       
     elif sys.argv[1] == 'astar':
+        g = GridWithWeight(30,15)
+        g.walls = DIAGRAM1_WALLS
         parents = a_star_search(g, start, goal)
     else:
         print('使い方: python3 search bfs または dijkstra または astar')
