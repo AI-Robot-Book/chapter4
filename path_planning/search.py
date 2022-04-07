@@ -13,6 +13,7 @@ start = (0,10)
 goal  = (27,2)
 
 if len(sys.argv) != 2:
+    print(len(sys.argv))
     print('使い方: python3 search.py 1 または 2 または 3')
     sys.exit(1)
 
