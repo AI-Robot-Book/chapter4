@@ -177,7 +177,7 @@ class SquareGrid:
         results = filter(self.passable, results)
         return results
 
-class WelsightedGraph(Graph):
+class WeightedGraph(Graph):
     def cost(self, from_id: Location, to_id: Location) -> float: pass
 
 class GridWithWeights(SquareGrid):
