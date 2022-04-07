@@ -17,15 +17,15 @@ method = 2  # BFS:1, Dijkstra:2, A*:3
 if method == 1:
     # BFS
     search  = breadth_first_search(g, start, goal)
-    title = 'Breadth-First Search'
+    title = '幅優先探索'
 elif method == 2:
     # Dijkstra
     search, cost_so_far  = dijkstra_search(g, start, goal)
-    title = 'Dijkstra\'s algorithm'
+    title = 'ダイクストラ法'
 elif method == 3:
     # A*
     search, cost_so_far  = a_star_search(g, start, goal)
-    title = 'A* search'
+    title = 'A*アルゴリズム'
 
 
 draw_grid2(g, path=reconstruct_path(search, start=start, goal=goal), \
