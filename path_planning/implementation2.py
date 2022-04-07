@@ -330,7 +330,7 @@ class GridWithAdjustedWeights(GridWithWeights):
         return prev_cost + 0.001 * nudge
 
 def main():
-    printf("Implementatin.py")
+    print("Implementatin.py")
 
 if __name__ == "__main__":
     main()
