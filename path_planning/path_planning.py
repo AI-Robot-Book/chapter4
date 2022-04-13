@@ -15,7 +15,7 @@
 # 1. Grafical display of the grid map using the Matplotib instead of the text-based display
 # 2. Queue module is used from Python standard library
 # 3. Simplification of the sample code for beginner
-# 4. Change the variavles name: forntier -> open_list,   visited -> closed_list, ...
+# 4. Change the variavles name: forntier -> open_cells,   visited -> closed_cells, ...
 
 
 from __future__ import annotations
@@ -196,7 +196,7 @@ class DrawMap():
         else:
             # flag = False  # comment out demu
             # self.steps += 1
-            if self.map[id[1],id[0]] == 0: # not visited, not in closed grids
+            if self.map[id[1],id[0]] == 0: # not visited, not in closed cells
                 self.map[id[1],id[0]] = self.map[current[1],current[0]] + 1
                 tile = str(self.map[id[1],id[0]])  
                   
@@ -291,39 +291,39 @@ def heuristic(a: GridLocation, b: GridLocation) -> float:
 def breadth_first_search(graph, start, goal, title):
     draw_map = DrawMap(graph, start, goal, title)
 
-    open_list = queue.Queue() 
-    open_list.put(start)
-    closed_list = dict()
-    closed_list[start] = None
+    open_cells = queue.Queue() 
+    open_cells.put(start)
+    closed_cells = dict()
+    closed_cells[start] = None
 
-    while not open_list.empty():
-        current = open_list.get()        
+    while not open_cells.empty():
+        current = open_cells.get()        
         if current == goal:
             break        
         for next in graph.neighbors(current):
-            if next not in closed_list: 
-                closed_list[next] = current
-                open_list.put(next) 
+            if next not in closed_cells: 
+                closed_cells[next] = current
+                open_cells.put(next) 
                 draw_map.set_value(next, current)  # demu 
                                
-    path = reconstruct_path(came_from=closed_list, start=start, goal=goal) 
+    path = reconstruct_path(came_from=closed_cells, start=start, goal=goal) 
     draw_map.show(path)
     
-    return closed_list
+    return closed_cells
 
 
 def dijkstra_search(graph, start, goal, title):
     draw_map = DrawMap(graph, start, goal, title)
  
-    open_list = queue.PriorityQueue()
-    open_list.put(start, 0)
-    closed_list = dict()
-    closed_list[start] = None
+    open_cells = queue.PriorityQueue()
+    open_cells.put(start, 0)
+    closed_cells = dict()
+    closed_cells[start] = None
     cost_so_far = dict()
     cost_so_far[start] = 0
     
-    while not open_list.empty():
-        current = open_list.get()        
+    while not open_cells.empty():
+        current = open_cells.get()        
         if current == goal:
             break        
         for next in graph.neighbors(current):
@@ -331,27 +331,27 @@ def dijkstra_search(graph, start, goal, title):
             if next not in cost_so_far or new_cost < cost_so_far[next]:
                 cost_so_far[next] = new_cost
                 priority = new_cost
-                open_list.put(next, priority)
-                closed_list[next] = current
+                open_cells.put(next, priority)
+                closed_cells[next] = current
                 draw_map.set_value(next, current)
     
-    path=reconstruct_path(came_from=closed_list, start=start, goal=goal)    
+    path=reconstruct_path(came_from=closed_cells, start=start, goal=goal)    
     draw_map.show(path)
-    return closed_list, cost_so_far
+    return closed_cells, cost_so_far
 
 
 def a_star_search(graph, start, goal, title):
     draw_map = DrawMap(graph, start, goal, title)
   
-    open_list = queue.PriorityQueue()
-    open_list.put(start, 0)
-    closed_list = dict()
-    closed_list[start] = None
+    open_cells = queue.PriorityQueue()
+    open_cells.put(start, 0)
+    closed_cells = dict()
+    closed_cells[start] = None
     cost_so_far = dict()
     cost_so_far[start] = 0
     
-    while not open_list.empty():
-        current: Location = open_list.get()        
+    while not open_cells.empty():
+        current: Location = open_cells.get()        
         if current == goal:
             break        
         for next in graph.neighbors(current):
@@ -359,13 +359,13 @@ def a_star_search(graph, start, goal, title):
             if next not in cost_so_far or new_cost < cost_so_far[next]:
                 cost_so_far[next] = new_cost
                 priority = new_cost + heuristic(next, goal)
-                open_list.put(next, priority)
-                closed_list[next] = current    
+                open_cells.put(next, priority)
+                closed_cells[next] = current    
                 draw_map.set_value(next, current)
     
-    path=reconstruct_path(came_from=closed_list, start=start, goal=goal)    
+    path=reconstruct_path(came_from=closed_cells, start=start, goal=goal)    
     draw_map.show(path)    
-    return closed_list, cost_so_far
+    return closed_cells, cost_so_far
 
 
 def main():  
