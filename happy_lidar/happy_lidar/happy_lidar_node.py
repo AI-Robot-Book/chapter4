@@ -55,29 +55,28 @@ class HappyLidar(Node):  # 簡単な移動クラス
         steps = 0
         self.set_vel(0.0, 0.0)   
         rclpy.spin_once(self)
-        self.load_gazebo_models()  # Doorのロード
+        self.load_gazebo_models()  # Door 3Dモデルのロード
 
         while rclpy.ok():
             print(f'step={steps}')            
             
-            # Door open script
+            # ドアオープンしたときの処理
             if len(self.scan.ranges) != 0:
                 if self.scan.ranges[0] > 0.5:
-                    #self.set_vel(0.2, 0.0)
-                    self.set_vel(0.0, 0.0)
+                    self.set_vel(0.2, 0.0)
                 else:
                     self.set_vel(0.0, 0.0)
 
-            if steps == 100:
-                self.delete_gazebo_models()   # The door open 
+            if steps == 100: 
+                self.delete_gazebo_models() # ドアオープン 
 
             rclpy.spin_once(self)
-            # self.print_lidar_info() # must be call after spin_once
+            # self.print_lidar_info() 
             if len(self.scan.ranges) != 0:
-                print(f'r[{  0}]={self.scan.ranges[0]} ')     # front
-                print(f'r[{ 90}]={self.scan.ranges[90]} ')    # left
-                print(f'r[{180}]={self.scan.ranges[180]} ')   # rear
-                print(f'r[{270}]={self.scan.ranges[270]} ')   # right
+                print(f'r[{  0}]={self.scan.ranges[0]} ')     # 前
+                print(f'r[{ 90}]={self.scan.ranges[90]} ')    # 左
+                print(f'r[{180}]={self.scan.ranges[180]} ')   # 後
+                print(f'r[{270}]={self.scan.ranges[270]} ')   # 右
   
             time.sleep(0.1)  # 0.1 [s]
             steps += 1
@@ -130,23 +129,20 @@ class HappyLidar(Node):  # 簡単な移動クラス
     def timer_callback(self):  # タイマーのコールバック関数
         self.pub.publish(self.vel)  # 速度指令メッセージのパブリッシュ 
     
-    #https://discourse.ros.org/t/spawning-a-robot-entity-using-a-node-with-gazebo-and-ros-2/9985
-    #  Gazebo3Dモデルのロード
+    #  Gazebo用ドアの3Dモデルをロード
     def load_gazebo_models(self):
         door_reference_frame='world'
         door_pose = Pose(position=Point(x=1.1, y=-0.2, z=0.5))
 
         client = self.create_client(SpawnEntity, "/spawn_entity")
 
-        self.get_logger().info("Connecting to `/spawn_entity` service...")
         if not client.service_is_ready():
             client.wait_for_service()
-            self.get_logger().info("connected!")
-        
+            
         home_dir = os.environ['HOME']    
         sdf_file_path = home_dir + '/airobot_ws/src/chapter4/happy_lidar/models/door/model.sdf'
 
-        # Set data for request
+        # リクエストデータの設定
         request = SpawnEntity.Request()
         request.name = 'door'
         request.xml = open(sdf_file_path, 'r').read()
@@ -165,13 +161,12 @@ class HappyLidar(Node):  # 簡単な移動クラス
             raise RuntimeError(
                 'exception while calling service: %r' % future.exception())
 
-
     #  Gazebo 3Dモデルの削除
     def delete_gazebo_models(self):
         print('delete_gazebo_models')
         client = self.create_client(DeleteEntity, '/delete_entity')
         while not client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('service not availabe. waiting...')
+            self.get_logger().info('サービスは利用できません．待機中...')
 
         request = DeleteEntity.Request()
         request.name = 'door'      
@@ -183,7 +178,6 @@ class HappyLidar(Node):  # 簡単な移動クラス
             print('response: %r' % future.result())
         else:
             raise RuntimeError(
-                'exception while calling service: %r' % future.exception())
   
 
 def main(args=None):  # main関数
@@ -194,7 +188,5 @@ def main(args=None):  # main関数
         node.happy_lidar()
     except KeyboardInterrupt:
         print('Ctrl+Cが押されました．')     
-    except ExternalShutdownException:
-        sys.exit(1)
     finally:
-        rclpy.try_shutdown()
+        rclpy.shutdown()
