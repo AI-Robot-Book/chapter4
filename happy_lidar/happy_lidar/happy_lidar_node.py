@@ -29,19 +29,8 @@ class HappyLidar(Node):  # 簡単な移動クラス
         self.x, self.y, self.yaw = 0.0, 0.0, 0.0   
         self.x0, self.y0, self.yaw0 = 0.0, 0.0, 0.0
         self.vel = Twist()  # Twist メッセージ型インスタンスの生成
-        self.set_vel(0.0, 0.0)  # 速度の初期化        
- 
-    def get_pose(self, msg):      # 姿勢を取得する
-        x = msg.pose.pose.position.x
-        y = msg.pose.pose.position.y
-        q_x = msg.pose.pose.orientation.x
-        q_y = msg.pose.pose.orientation.y
-        q_z = msg.pose.pose.orientation.z
-        q_w = msg.pose.pose.orientation.w
-        (roll, pitch, yaw) = tf_transformations.euler_from_quaternion(
-            (q_x, q_y, q_z, q_w))
-        return x, y, yaw
-
+        self.set_vel(0.0, 0.0)  # 速度の初期化
+        
     def lidar_cb(self, msg):  # LiDARのコールバック関数
         self.scan = msg
 
@@ -102,6 +91,17 @@ class HappyLidar(Node):  # 簡単な移動クラス
         print(f'r[{270}]={self.scan.ranges[270]} ')
         print(f'r[{359}]={self.scan.ranges[359]} ')
 
+    def get_pose(self, msg):      # 姿勢を取得する
+        x = msg.pose.pose.position.x
+        y = msg.pose.pose.position.y
+        q_x = msg.pose.pose.orientation.x
+        q_y = msg.pose.pose.orientation.y
+        q_z = msg.pose.pose.orientation.z
+        q_w = msg.pose.pose.orientation.w
+        (roll, pitch, yaw) = tf_transformations.euler_from_quaternion(
+            (q_x, q_y, q_z, q_w))
+        return x, y, yaw        
+        
     def odom_cb(self, msg):         # オドメトリのコールバック関数
         self.x, self.y, self.yaw = self.get_pose(msg)
         self.get_logger().info(
