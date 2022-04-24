@@ -8,10 +8,9 @@ import tf_transformations
 from rclpy.node import Node   
 from rclpy.executors import ExternalShutdownException    
 from geometry_msgs.msg import Twist, Pose, Point  # Twistメッセージ型をインポート
-from nav_msgs.msg import Odometry    # Odometryメッセージ型をインポート
-from sensor_msgs.msg import LaserScan    # Odometryメッセージ型をインポート
+from nav_msgs.msg import Odometry                 # Odometryメッセージ型をインポート
+from sensor_msgs.msg import LaserScan             # Odometryメッセージ型をインポート
 from tf_transformations import euler_from_quaternion 
-
 from ament_index_python.packages import get_package_share_directory
 from gazebo_msgs.srv import SpawnEntity, DeleteEntity
 
@@ -33,7 +32,6 @@ class HappyLidar(Node):  # 簡単な移動クラス
         
     def lidar_cb(self, msg):  # LiDARのコールバック関数
         self.scan = msg
-
         for i in range(len(msg.ranges)):
             if msg.ranges[i] < msg.range_min or msg.ranges[i] > msg.range_max:
                 self.scan.ranges[i] = math.nan                
