@@ -48,10 +48,12 @@ class HappyLidar(Node):  # 簡単なLiDARクラス
         while rclpy.ok():
             print(f'step={steps}')         
             if steps == 100: 
-                self.delete_gazebo_models() # ドアの削除（ドアオープン） 
-                
-            if self.scan.ranges[0] > 0.5: # ドアオープンしたときの処理
-                self.set_vel(0.2, 0.0)      # 前進 
+                self.delete_gazebo_models()   # ドアの削除（ドアオープン） 
+            dist = 0.5                      # スタートする距離   
+            if self.scan.ranges[0] > dist:  # ドアオープンしたときの処理
+                self.set_vel(0.2, 0.0)        # 前進 
+            else:
+                self.set_vel(0.0, 0.0)        # 停止
                 
             rclpy.spin_once(self)
             # self.print_lidar_info() 
