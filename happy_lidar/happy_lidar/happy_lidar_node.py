@@ -26,10 +26,9 @@ class HappyLidar(Node):  # 簡単なLiDARクラス
         self.vel = Twist()      # Twistメッセージ型インスタンスの生成
         self.set_vel(0.0, 0.0)  # 速度の初期化
         
-        # LiDARを使うために追加    
         self.sub = self.create_subscription(LaserScan, 'scan', self.lidar_cb, 10)   
         self.scan = LaserScan()  # LaserScanメッセージ型インスタンスの生成
-        self.scan.ranges = [-999] * 360 # 生データを区別するためありえない値で初期化
+        self.scan.ranges = [-99.9] * 360 # 生データを区別するためありえない値で初期化
         
     def lidar_cb(self, msg):  # LiDARのコールバック関数
         self.scan = msg
