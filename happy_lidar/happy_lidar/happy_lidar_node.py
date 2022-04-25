@@ -52,9 +52,7 @@ class HappyLidar(Node):  # 簡単なLiDARクラス
                 
             if self.scan.ranges[0] > 0.5: # ドアオープンしたときの処理
                 self.set_vel(0.2, 0.0)      # 前進 
-            else:
-                self.set_vel(0.0, 0.0)
-            
+                
             rclpy.spin_once(self)
             # self.print_lidar_info() 
             print(f'r[{  0}]={self.scan.ranges[0]}')     # 前
