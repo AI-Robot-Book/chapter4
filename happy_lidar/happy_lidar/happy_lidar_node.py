@@ -25,10 +25,10 @@ class HappyLidar(Node):  # 簡単なLiDARクラス
         self.x0, self.y0, self.yaw0 = 0.0, 0.0, 0.0
         self.vel = Twist()      # Twistメッセージ型インスタンスの生成
         self.set_vel(0.0, 0.0)  # 速度の初期化
-        
+        # LiDARを使うため追加
         self.sub = self.create_subscription(LaserScan, 'scan', self.lidar_cb, 10)   
         self.scan = LaserScan()  # LaserScanメッセージ型インスタンスの生成
-        self.scan.ranges = [-99.9] * 360 # 生データを区別するためありえない値で初期化
+        self.scan.ranges = [-99.9] * 360 # 取得したデータと区別するためありえない値で初期化
         
     def lidar_cb(self, msg):  # LiDARのコールバック関数
         self.scan = msg
@@ -42,7 +42,7 @@ class HappyLidar(Node):  # 簡単なLiDARクラス
     def happy_lidar(self): # ドアオープンしたら前進するメソッド
         steps = 0
         self.load_gazebo_models()  # ドアのロード
-        time.sleep(3)              # ドアがシミュレータに反映されるまで少し待つ
+        time.slepp(2)              # ドアがシミュレータに反映されるまで少し待つ
         self.set_vel(0.0, 0.0)     # 停止  
         rclpy.spin_once(self)      # コールバック関数をよび出す  
 
