@@ -34,15 +34,14 @@ class HappyLidar(Node):  # 簡単なLiDARクラス
         self.scan = msg
         for i in range(len(msg.ranges)):
             if msg.ranges[i] < msg.range_min or msg.ranges[i] > msg.range_max:
-                # self.scan.ranges[i] = math.nan
-                pass
+                pass # 計測範囲外のデータは使わないような処理が必要．ここではパス．
             else:
                 self.scan.ranges[i] = msg.ranges[i] 
     
     def happy_lidar(self): # ドアオープンしたら前進するメソッド
         steps = 0
         self.load_gazebo_models()  # ドアのロード
-        time.slepp(2)              # ドアがシミュレータに反映されるまで少し待つ
+        time.sleep(2)              # ドアがシミュレータに反映されるまで少し待つ
         self.set_vel(0.0, 0.0)     # 停止  
         rclpy.spin_once(self)      # コールバック関数をよび出す  
 
