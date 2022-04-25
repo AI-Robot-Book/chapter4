@@ -9,26 +9,27 @@ from rclpy.node import Node
 from rclpy.executors import ExternalShutdownException    
 from geometry_msgs.msg import Twist, Pose, Point  # Twistメッセージ型をインポート
 from nav_msgs.msg import Odometry                 # Odometryメッセージ型をインポート
-from sensor_msgs.msg import LaserScan             # Odometryメッセージ型をインポート
+from sensor_msgs.msg import LaserScan             # LaserScanメッセージ型をインポート
 from tf_transformations import euler_from_quaternion 
 from ament_index_python.packages import get_package_share_directory
 from gazebo_msgs.srv import SpawnEntity, DeleteEntity
 
 
-class HappyLidar(Node):  # 簡単な移動クラス
+class HappyLidar(Node):  # 簡単なLiDARクラス
     def __init__(self):   # コンストラクタ
         super().__init__('happy_lidar_node')   
         self.timer = self.create_timer(0.01, self.timer_callback)
         self.pub = self.create_publisher(Twist, 'cmd_vel', 10) 
         self.sub = self.create_subscription(Odometry, 'odom', self.odom_cb, 10)
-        # LiDARを使うために追加    
-        self.sub = self.create_subscription(LaserScan, 'scan', self.lidar_cb, 10)   
-        self.scan = LaserScan()       
- 
         self.x, self.y, self.yaw = 0.0, 0.0, 0.0   
         self.x0, self.y0, self.yaw0 = 0.0, 0.0, 0.0
-        self.vel = Twist()  # Twist メッセージ型インスタンスの生成
+        self.vel = Twist()      # Twistメッセージ型インスタンスの生成
         self.set_vel(0.0, 0.0)  # 速度の初期化
+        
+        # LiDARを使うために追加    
+        self.sub = self.create_subscription(LaserScan, 'scan', self.lidar_cb, 10)   
+        self.scan = LaserScan()  # LaserScanメッセージ型インスタンスの生成
+        self.scan.ranges = [-999] * 360 # 生データを区別するためありえない値で初期化
         
     def lidar_cb(self, msg):  # LiDARのコールバック関数
         self.scan = msg
@@ -38,38 +39,32 @@ class HappyLidar(Node):  # 簡単な移動クラス
             else:
                 self.scan.ranges[i] = msg.ranges[i] 
     
-    def happy_lidar(self):
+    def happy_lidar(self): # ドアオープンしたら前進するメソッド
         steps = 0
-        self.set_vel(0.0, 0.0)   
-        rclpy.spin_once(self)
-        self.load_gazebo_models()  # Door 3Dモデルのロード
+        self.set_vel(0.0, 0.0)     # 停止  
+        # rclpy.spin_once(self)      # コールバック関数をよび出す
+        self.load_gazebo_models()  # ドアのロード
 
         while rclpy.ok():
-            print(f'step={steps}')            
-            
-            # ドアオープンしたときの処理
-            if len(self.scan.ranges) != 0:
-                if self.scan.ranges[0] > 0.5:
-                    self.set_vel(0.2, 0.0)
-                else:
-                    self.set_vel(0.0, 0.0)
-
+            print(f'step={steps}')         
             if steps == 100: 
-                self.delete_gazebo_models() # ドアオープン 
-
+                self.delete_gazebo_models() # ドアの削除（ドアオープン） 
+                
+            if self.scan.ranges[0] > 0.5: # ドアオープンしたときの処理
+                self.set_vel(0.2, 0.0)      # 前進 
+            
             rclpy.spin_once(self)
             # self.print_lidar_info() 
-            if len(self.scan.ranges) != 0:
-                print(f'r[{  0}]={self.scan.ranges[0]} ')     # 前
-                print(f'r[{ 90}]={self.scan.ranges[90]} ')    # 左
-                print(f'r[{180}]={self.scan.ranges[180]} ')   # 後
-                print(f'r[{270}]={self.scan.ranges[270]} ')   # 右
+            print(f'r[{  0}]={self.scan.ranges[0]}')     # 前
+            print(f'r[{ 90}]={self.scan.ranges[90]}')    # 左
+            print(f'r[{180}]={self.scan.ranges[180]}')   # 後
+            print(f'r[{270}]={self.scan.ranges[270]}')   # 右
   
             time.sleep(0.1)  # 0.1 [s]
             steps += 1
     
     def print_lidar_info(self):
-        # シミュレーションのPRDLIARは全周360[°] 計測可能。計測角度は-180[°]から180[°]。
+        # シミュレーションのLiDAR (HILS-LFCD LDS) は全周360[°] 計測可能。計測角度は-180[°]から180[°]。
         # ROSは右手系、進行方向x軸、左方向y軸、上方向がz軸（反時計まわりが正)。
         if len(self.scan.ranges) == 0:
             return
@@ -87,8 +82,7 @@ class HappyLidar(Node):  # 簡単な移動クラス
         print(f'r[{90}]={self.scan.ranges[90]} ')
         print(f'r[{180}]={self.scan.ranges[180]} ')
         print(f'r[{270}]={self.scan.ranges[270]} ')
-        print(f'r[{359}]={self.scan.ranges[359]} ')
-
+  
     def get_pose(self, msg):      # 姿勢を取得する
         x = msg.pose.pose.position.x
         y = msg.pose.pose.position.y
@@ -149,39 +143,37 @@ class HappyLidar(Node):  # 簡単な移動クラス
         request.initial_pose.position.x =  1.1
         request.initial_pose.position.y = -0.2
         request.initial_pose.position.z =  0.5
-
-        self.get_logger().info("Sending service request to `/spawn_entity`")
+        
+        self.get_logger().info("サービスリクエストを`/spawn_entity`に送信中...")
         future = client.call_async(request)
         rclpy.spin_until_future_complete(self, future)
         if future.result() is not None:
-            print('response: %r' % future.result())
+            print(f'response:{future.result()}')
         else:
-            raise RuntimeError(
-                'exception while calling service: %r' % future.exception())
+            raise RuntimeError(f'例外:{future.exception()}')
 
-    #  Gazebo 3Dモデルの削除
+    #  ドアの3Dモデルを削除
     def delete_gazebo_models(self):
         print('delete_gazebo_models')
         client = self.create_client(DeleteEntity, '/delete_entity')
         while not client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('サービスは利用できません．待機中...')
-
+        # リクエストデータの設定
         request = DeleteEntity.Request()
         request.name = 'door'      
      
-        self.get_logger().info("Sending service request to `/delete_entity`")
+        self.get_logger().info("サービスリクエストを`/delete_entity`に送信中...")
         future =  client.call_async(request)
         rclpy.spin_until_future_complete(self, future)
         if future.result() is not None:
-            print('response: %r' % future.result())
+            print(f'response:{future.result()}')
         else:
-            raise RuntimeError(
+            raise RuntimeError(f'例外:{future.exception()}')
   
 
-def main(args=None):  # main関数
-    rclpy.init(args=args)
+def main():  # main関数
+    rclpy.init()
     node = HappyLidar()
-
     try:
         node.happy_lidar()
     except KeyboardInterrupt:
