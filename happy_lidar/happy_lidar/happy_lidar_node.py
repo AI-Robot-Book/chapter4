@@ -41,7 +41,7 @@ class HappyLidar(Node):  # 簡単なLiDARクラス
     def happy_lidar(self): # ドアオープンしたら前進するメソッド
         steps = 0
         self.load_gazebo_models()  # ドアのロード
-        time.sleep(2)              # ドアがシミュレータに反映されるまで少し待つ
+        time.sleep(3)              # ドアがシミュレータに反映されるまで少し待つ
         self.set_vel(0.0, 0.0)     # 停止  
         rclpy.spin_once(self)      # コールバック関数をよび出す  
 
