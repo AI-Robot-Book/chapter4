@@ -56,7 +56,7 @@ class HappyLidar(Node):  # 簡単なLiDARクラス
                 self.set_vel(0.0, 0.0)        # 停止
                 
             rclpy.spin_once(self)
-            # self.print_lidar_info() 
+            # self.print_lidar_info() # scanトピックの値を表示するときはコメントアウト
             print(f'r[{  0}]={self.scan.ranges[0]}')     # 前
             print(f'r[{ 90}]={self.scan.ranges[90]}')    # 左
             print(f'r[{180}]={self.scan.ranges[180]}')   # 後
