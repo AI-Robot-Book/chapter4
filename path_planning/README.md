@@ -4,7 +4,7 @@
 ## 実行方法
 コードのある場所に移動する．
 ~~~
-cd ~/airobot_ws/src/chapter4/
+cd ~/airobot_ws/src/chapter4/path_planning
 ~~~
 端末を３分割して次のコマンドを実行する．
 ~~~
