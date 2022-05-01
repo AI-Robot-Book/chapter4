@@ -26,7 +26,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math, queue, sys, time
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from matplotlib.colors import ListedColormap
+
 
 GridLocation = Tuple[int, int]
 Location = TypeVar('Location')
@@ -42,7 +42,6 @@ class SquareGrid:
         self.width = width
         self.height = height
         self.walls: List[GridLocation] = []
-        self.desert: List[GridLocation] = []
     
     def in_bounds(self, id):
         (x, y) = id
@@ -97,8 +96,6 @@ class PathPlanning:
     def __init__(self, world_no, method):       
         self.world_no = world_no  # world number
         self.make_grid_world()    # make a grid world
-        self.WEIGHTS: Dict[GridLocation, float] = {}
-
 
         if method == 1:  # BFS
             self.title = '幅優先探索'
@@ -123,8 +120,6 @@ class PathPlanning:
                 (23, 6), (24, 6), (25, 6), (3, 7), (4, 7), (13, 7), (14, 7), (3, 8), (4, 8), (13, 8), (14, 8), \
                 (3, 9), (4, 9), (13, 9), (14, 9), (3, 10), (4, 10), (13, 10), (14, 10), (3, 11), (4, 11), (13, 11), \
                 (14, 11), (13, 12), (14, 12), (13, 13), (14, 13), (13, 14), (14, 14)]
-            self.DIAGRAM_DESERT = []
-            self.WEIGHTS = {loc: 1 for loc in self.DIAGRAM_DESERT}
             print('DIAGRAM_WALL1=', self.DIAGRAM_WALLS)
         elif self.world_no == 2:
             self.width = 70        # width of the grid world
@@ -138,8 +133,6 @@ class PathPlanning:
                     if ((i == 0 or j == 0) or (i == self.width-1 or j == self.height-1) or 
                         (i == 29 and j < 50) or (i == 49 and j >= 30)):
                         self.DIAGRAM_WALLS.append((i, j))
-            self.DIAGRAM_DESERT = []
-            self.WEIGHTS = {loc: 1 for loc in self.DIAGRAM_DESERT}
             print('DIAGRAM_WALL2=', self.DIAGRAM_WALLS)        
         elif self.world_no == 3:
             self.width = 10        # width of the grid world
@@ -152,8 +145,6 @@ class PathPlanning:
                 for j in range(self.height):
                     if ((i == 3 and j < 6) or (i == 6 and j >= 3)):
                         self.DIAGRAM_WALLS.append((i, j))
-            self.DIAGRAM_DESERT = []
-            self.WEIGHTS = {loc: 1 for loc in self.DIAGRAM_DESERT}
             print('DIAGRAM_WALL3=', self.DIAGRAM_WALLS)               
         elif self.world_no == 4:
             self.width = 8       # width of the grid world
@@ -163,31 +154,13 @@ class PathPlanning:
             # Walls2 (70x70 grid world)
             self.DIAGRAM_WALLS = [(0, 4), (1, 2), (1, 6), (1, 7), (2, 4), (3, 1), (3, 3), (3 ,4),\
                 (3 ,5), (3, 6), (4, 3), (5, 1), (5, 3), (5, 5), (6, 5), (6, 7), (7, 2), (7, 3), (7, 4)]
-            self.DIAGRAM_DESERT = []
-            self.WEIGHTS = {loc: 1 for loc in self.DIAGRAM_DESERT}
-            print('DIAGRAM_WALL4=', self.DIAGRAM_WALLS) 
-        elif self.world_no == 5:  # same world change later
-            self.width  = 10       # width of the grid world
-            self.height = 10      # height of the grid world    
-            self.start = (0, 4)  # start point
-            self.goal = (9, 4)   # goal point        
-            self.DIAGRAM_WALLS = [(1, 7), (1, 8), (2, 7), (2, 8), (3, 7), (3, 8)]
-            self.DIAGRAM_DESERT =  [(3, 4), (3, 5), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5), (4, 6),
-                                    (4, 7), (4, 8), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6),
-                                    (5, 7), (5, 8), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6), (6, 7),
-                                    (7, 3), (7, 4), (7, 5)]
-            self.WEIGHTS = {loc: 5 for loc in self.DIAGRAM_DESERT}
-            print('WEIGHTS=', self.WEIGHTS) 
-
-
+            print('DIAGRAM_WALL4=', self.DIAGRAM_WALLS)  
         else:
             print("Error: wrong world number")
         
         self.graph = GridWithWeights(self.width, self.height)  # demu
         #self.graph = SquareGrid(self.width, self.height)
-        self.graph.walls = self.DIAGRAM_WALLS  
-        self.graph.desert = self.DIAGRAM_DESERT   
-        self.graph.weights = self.WEIGHTS 
+        self.graph.walls = self.DIAGRAM_WALLS      
 
 
 class DrawMap():
@@ -208,8 +181,8 @@ class DrawMap():
         self.fig.subplots_adjust(bottom=0.15)
         self.ax.text(start[0],start[1], 'S', va='center', ha='center')
   
-    def set_value_heatmap(self, id, current):
-        tile = self.get_tile(id)
+    def set_value(self, id, current):
+        tile = self.draw_tile(id)
         flag = True
  
         if tile == 'S':  # スタート
@@ -220,46 +193,17 @@ class DrawMap():
             self.map[id[1], id[0]] = 0 # 200
         elif tile == '#':  # obstacles
             self.map[id[1], id[0]] = -100 # 1000 # 200
-        #elif tile == '@':  # desert
-        #    self.map[id[1], id[0]] = 1e10 # -100 # 1000 # 200
         else:
             # flag = False  # comment out demu
             # self.steps += 1
             if self.map[id[1],id[0]] == 0: # not visited, not in closed cells
                 self.map[id[1],id[0]] = self.map[current[1],current[0]] + 1
-                tile = str(self.map[id[1],id[0]])                    
-        if flag:
-            self.ax.text(id[0],id[1], tile, va='center', ha='center')
-
-    def set_value(self, id, current):
-        tile = self.get_tile(id)
-        flag = True
- 
-        if tile == 'S':  # スタート
-            print('start')
-            self.map[id[1], id[0]] = 0
-        elif tile == 'G':  # ゴール
-            print('goal')
-            self.map[id[1], id[0]] = 0 # 200
-        elif tile == '#':  # obstacles
-            self.map[id[1], id[0]] = -100 # 1000 # 200
-        elif tile == '@':  # desert
-            self.map[id[1], id[0]] = 10 # -100 # 1000 # 200
-        else:
-            # flag = False  # comment out demu
-            # self.steps += 1
-            #if self.map[id[1],id[0]] == 0: # not visited, not in closed cells
-            #    # self.map[id[1],id[0]] = self.map[current[1],current[0]] + 1
-            #    self.map[id[1],id[0]] = self.map[current[1],current[0]] \
-            #        + self.graph.weights.get((id[0],id[1]),1)
-            #    tile = str(self.map[id[1],id[0]])  
-            self.map[id[1], id[0]] = 1
-            tile = '$\cdot$' 
-
+                tile = str(self.map[id[1],id[0]])  
+                  
         if flag:
             self.ax.text(id[0],id[1], tile, va='center', ha='center')
               
-    def get_tile(self, id): 
+    def draw_tile(self, id): 
         #r = r"$\cdot$"
      
         # if 'point_to' in style and style['point_to'].get(id, None) is not None  \
@@ -270,12 +214,8 @@ class DrawMap():
             r = 'G'
         elif id in self.graph.walls:
             r = '#'
-        elif id in self.graph.desert:
-            r = '@'
         else:            
-            #r = str(self.map[id[1],id[0]]) 
-            r = '$\cdot$'
-            pass
+            r = str(self.map[id[1],id[0]])      
         return r 
 
     def draw_obstacles_path(self, path):
@@ -299,26 +239,7 @@ class DrawMap():
                 # self.ax.text(x1, y1, r3, va='center', ha='center') # comment out demu
 
     def paint_tile(self,path):
-        bad_value = 100000
-        
-        for id in path: # paint yellow
-           if id != self.start and id != self.goal:
-               self.map[id[1], id[0]] = bad_value
-
-        #for id2 in self.DIAGRAM_WALLS: # paint red
-        for id2 in self.graph.walls: # paint red
-            self.map[id2[1], id2[0]] = -100                   
-     
-        self.masked_map = np.ma.masked_where(self.map==bad_value, self.map)
-        colors = ['white','red', 'yellow', 'brown']
-        #self.cmap = plt.cm.Blues
-        self.cmap = ListedColormap(colors, name='custon')
-        self.cmap.set_under('red')   # 0より値が小さい格子はred
-        self.cmap.set_over('brown')   # vmaxより値が大きい格子はbrwon
-        self.cmap.set_bad('yellow')  # bad_valueの格子は黄色
-
-    def paint_tile_heatmap(self,path):
-        bad_value = 100000
+        bad_value = 1000000
         
         for id in path: # paint yellow
            if id != self.start and id != self.goal:
@@ -331,18 +252,18 @@ class DrawMap():
         self.masked_map = np.ma.masked_where(self.map==bad_value, self.map)
         self.cmap = plt.cm.Blues
         self.cmap.set_under('red')   # 0より値が小さい格子は黄色
-        self.cmap.set_over('brown')   # vmaxより値が大きい格子は赤色
-        self.cmap.set_bad('yellow')  # bad_valueの格子は黄色
+        self.cmap.set_over('pink')   # vmaxより値が大きい格子は赤色
+        self.cmap.set_bad('yellow')  # bad_valueの格子はピンク
         
     def show(self, path):
         self.draw_obstacles_path(path)
         self.paint_tile(path)
         im = self.ax.imshow(self.masked_map, cmap=self.cmap, vmin=-1)
         self.ax.invert_yaxis()         
-        # color bar
-        #divider = make_axes_locatable(self.ax)
-        #cax = divider.append_axes("right", size="5%", pad=0.1)
-        #self.fig.colorbar(im, label='steps',cax=cax)
+              
+        divider = make_axes_locatable(self.ax)
+        cax = divider.append_axes("right", size="5%", pad=0.1)
+        self.fig.colorbar(im, label='steps',cax=cax)
         #plt.pause(0.01)
         plt.show()
 
@@ -385,12 +306,8 @@ def breadth_first_search(graph, start, goal, title):
                 open_cells.put(next) 
                 draw_map.set_value(next, current)  # demu 
                                
-    #print(f'closed_cell={closed_cells}')
-
     path = reconstruct_path(came_from=closed_cells, start=start, goal=goal) 
-    #print(f'cost={cost_so_far[goal]}')
     draw_map.show(path)
-    
     
     return closed_cells
 
@@ -418,8 +335,7 @@ def dijkstra_search(graph, start, goal, title):
                 closed_cells[next] = current
                 draw_map.set_value(next, current)
     
-    path=reconstruct_path(came_from=closed_cells, start=start, goal=goal)  
-    print(f'cost={cost_so_far[goal]}')  
+    path=reconstruct_path(came_from=closed_cells, start=start, goal=goal)    
     draw_map.show(path)
     return closed_cells, cost_so_far
 
@@ -447,8 +363,7 @@ def a_star_search(graph, start, goal, title):
                 closed_cells[next] = current    
                 draw_map.set_value(next, current)
     
-    path=reconstruct_path(came_from=closed_cells, start=start, goal=goal)  
-    print(f'cost={cost_so_far[goal]}') 
+    path=reconstruct_path(came_from=closed_cells, start=start, goal=goal)    
     draw_map.show(path)    
     return closed_cells, cost_so_far
 
@@ -462,14 +377,8 @@ def main():
         sys.exit(1)
     else:
         method = int(sys.argv[1])  
-        if 1 <= method and method <= 3:
-            pass
-        else:
-            print('使い方: python3 search.py 1 または 2 または 3')
-            print('        1: Breadth-First, 2: Dijkstra,  3. A* search')
-            sys.exit(1)   
 
-    world_no = 5
+    world_no = 4
     path_planning = PathPlanning(world_no, method) 
 
 
