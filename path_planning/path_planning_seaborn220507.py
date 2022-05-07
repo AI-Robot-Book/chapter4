@@ -22,13 +22,13 @@
 from __future__ import annotations
 # some of these types are deprecated: https://www.python.org/dev/peps/pep-0585/
 from typing import Protocol, Dict, List, Iterator, Tuple, TypeVar, Optional
-import random
+
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import math, sys, time
 from queue import PriorityQueue, Queue
-from enum import Enum, auto
+from enum import Enum
 
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import ListedColormap, BoundaryNorm
@@ -61,10 +61,7 @@ class SquareGrid:
         (x, y) = id
         # Visitting order of neighbors that change the pass
         neighbors = [(x+1, y), (x, y+1), (x-1, y), (x, y-1),  # demu 8 directions
-                    (x-1, y-1), (x-1, y+1), (x+1, y-1), (x+1, y+1)]  # 
-
-        #neighbors = [(x+1, y), (x+1, y+1), (x, y+1), (x-1, y+1), 
-        #             (x-1, y), (x-1, y-1), (x, y-1), (x+1, y-1)]  # 
+                     (x-1, y-1), (x-1, y+1), (x+1, y-1), (x+1, y+1)]  # 
         # demu counter clockwise
         #neighbors = [(x+1, y), (x+1, y+1) ,(x, y+1), (x-1, y+1),  \
         #             (x-1, y), (x-1, y-1), (x, y-1), (x+1, y-1)] 
@@ -220,24 +217,7 @@ class PathPlanning:
                             self.DIAGRAM_WALLS.append((i, j))
             self.DIAGRAM_DESERT = []
             self.WEIGHTS = {loc: 1 for loc in self.DIAGRAM_DESERT}
-        elif self.world_no == 8:
-            self.width = 42        # width of the grid world
-            self.height = 42        # height of the grid world    
-            self.start = (5, 18)    # start point
-            self.goal = (26, 24)    # goal point        
-            self.DIAGRAM_WALLS = [] 
-            thresh = 0.7            
-            seed = 8
-            random.seed(seed)      
-            for i in range(self.width):
-                for j in range(self.height):
-                    if (i == 0 or j == 0 or
-                        i == self.width-1 or j == self.height-1):
-                            self.DIAGRAM_WALLS.append((i, j))
-                    elif (random.random() > thresh):
-                        self.DIAGRAM_WALLS.append((i, j))
-            self.DIAGRAM_DESERT = []
-            self.WEIGHTS = {loc: 1 for loc in self.DIAGRAM_DESERT}
+
         else:
             print("Error: wrong world number")
         
@@ -248,12 +228,22 @@ class PathPlanning:
         self.graph.weights = self.WEIGHTS 
 
 class Color(Enum):
-    GRAY = auto()         # 1
-    LIGHTYELLOW = auto()  # 2
-    BLACK = auto()        # 3
-    CHOCOLATE = auto()    # 4
-    CYAN = auto()         # 5
-    GREEN = auto()        # 6
+    #BLACK = 0
+    #DEEPSKYBLUE = 1
+    #BROWN = 2
+    #RED = 3
+    #LIGHTYELLOW = 4
+    #CRIMSON = 5
+    GRAY = 0
+    BLUE = 1
+    GREEN = 2
+    RED = 3
+    CYAN = 5
+    MAGENTA = 4
+    YELLOW = 6
+    BLACK = 7
+    WHITE = 8
+
 
 class DrawMap():
     def __init__(self, graph, start, goal, title):
@@ -269,11 +259,10 @@ class DrawMap():
         #self.colors = ['LightGrey', 'DeepSkyBlue', 'brown', 'Red', 'LightYellow','Crimson']
         #self.colors = ["black", "deepskyblue", "brown", "red", "lightyellow", "crimson"]
         #self.colors = ["white", "blue", "green", "red", "yellow", "brown"]
-        #self.colors = ["white", "gray", "black", "brown", "yeColor(1).name,llow"]
+        #self.colors = ["white", "gray", "black", "brown", "yellow"]
         sns.set()
-        self.cmap = ListedColormap([Color(1).name, Color(2).name, Color(3).name,
-                                    Color(4).name, Color(5).name, Color(6).name])
-        self.bounds = [0, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5]
+        self.cmap = ListedColormap(["gray", "white", "black", "chocolate", "cyan", "green"])
+        self.bounds = [0, 1, 2, 3, 4, 5, 6]
         self.norm   = BoundaryNorm(self.bounds, self.cmap.N)
         
         
@@ -290,7 +279,7 @@ class DrawMap():
 
         # maptolot
         self.fig, self.ax = plt.subplots(figsize=(8, 8))
-        self.fig.subplots_adjust(bottom=0.15) # 0.15
+        self.fig.subplots_adjust(bottom=0.15)
         #self.ax.text(start[0],start[1], 'S', va='center', ha='center')
         #self.ax.text(goal[0],goal[1], 'G', va='center', ha='center')
 
@@ -380,8 +369,8 @@ class DrawMap():
                 #elf.ax.text(x1, y1, r3, va='center', ha='center') # comment out demu
                 # plt.annotate(r3, (x1+0.2,y1+0.4))
                 #plt.annotate(r3, (x1,y1),va='center', ha='center')
-                #plt.text(x1,y1,r3, va='center', ha='center')
-                plt.text(x1+0.5,y1+0.5,r3, va='center', ha='center')
+                plt.text(x1,y1,r3, va='center', ha='center')
+                # plt.text(x1-0.35,y1+0.1,r3)
 
     # Paint the tile
     def paint_tile(self,path,closed_cells):     
@@ -394,21 +383,20 @@ class DrawMap():
         # LIGHTYELLOW = 4
         # CRIMSON = 5
         #print(f'path*={path}')
-        #print(f'map={self.map}')
+        print(f'map={self.map}')
         #self.map[0, 0] = Color.BLACK.value  
         #print(f'closed_cells={closed_cells}')
         
         for id in closed_cells: 
-            self.map[id[1], id[0]] = Color.GRAY.value # Color.YELLOW.value 
+            self.map[id[1], id[0]] = 1.5 # Color.YELLOW.value 
             # print(f'map[{id[1]}, {id[0]}]={self.map[id[1], id[0]] }') 
         for id in self.graph.walls: 
-            self.map[id[1], id[0]] = Color.LIGHTYELLOW.value # Color.GREEN.value
+            self.map[id[1], id[0]] = 2.5 # Color.GREEN.value
         for id in self.graph.desert: 
-            self.map[id[1], id[0]] = Color.BLACK.value # Color.RED.value 
+            self.map[id[1], id[0]] = 3.5 # Color.RED.value 
         for id in path: 
-            self.map[id[1], id[0]] = Color.CHOCOLATE.value # Color.CYAN.value
-      
-
+            self.map[id[1], id[0]] = 4.5 # Color.CYAN.value
+        
         """       
         for id in closed_cells: 
             self.map[id[1], id[0]] = -1 
@@ -438,34 +426,28 @@ class DrawMap():
         self.draw_obstacles_path(path)
         self.paint_tile(path, closed_cells)
         #im = self.ax.imshow(self.masked_map, cmap=self.cmap, vmin=-1)
-        #im = self.ax.imshow(self.map, cmap=self.cmap)        
+        im = self.ax.imshow(self.map, cmap=self.cmap)        
              
         ##plt.pause(0.01)
-        self.ax = sns.heatmap(self.map, cmap=self.cmap, norm=self.norm, linewidths=.5, 
-            linecolor='black', square=True, cbar=False)
-    
-        self.ax.axvline(x = self.graph.width, linewidth=2, color='black')
-        self.ax.axhline(y =  0, linewidth=2, color='black')
-        #sns.set_style('whitegrid')
+        #self.ax = sns.heatmap(self.map, cmap=self.cmap, norm=self.norm, linewidths=.5, 
+        #    linecolor='black', square=True, cbar=False)
         self.ax.invert_yaxis()    
-        # self.path_length = len(path)
-        self.path_length = len(closed_cells)
-        self.title += ' (Explored ' + str(self.path_length-1) + ' cells)'
+        self.path_length = len(path)
+        self.title += ' (' + str(self.path_length-1) + ' steps)'
         self.ax.set_title(self.title, pad = 30, fontname='TakaoGothic')     
-        self.ax.text(start[0]+0.5,start[1]+0.5, 'S', va='center', ha='center')
-        self.ax.text(goal[0]+0.5,goal[1]+0.5, 'G', va='center', ha='center')
-        #self.ax.text(start[0],start[1], 'S')
-        #self.ax.text(goal[0],goal[1], 'G')
+        #self.ax.text(start[0],start[1], 'S', va='center', ha='center')
+        #self.ax.text(goal[0],goal[1], 'G', va='center', ha='center')
+        self.ax.text(start[0],start[1], 'S')
+        self.ax.text(goal[0],goal[1], 'G')
         #plt.annotate('S', start)
         #plt.annotate('G', goal)
-        print(np.arange(0, self.graph.width, step=5))
-        #self.ax.set_xticks(np.arange(0, self.graph.width, step=5), rotation=0)
-        #self.ax.set_yticks(np.arange(0, self.graph.height, step=5), rotation=0)
+        
+        plt.xticks(rotation=0)
         #plt.tick_params(width=4,length=4)
         plt.grid(True)
         plt.show()
 
-        #print(f'map[start]={self.map[self.start[0],self.start[1]]}')
+        print(f'map[start]={self.map[self.start[0],self.start[1]]}')
         #plt.show()
         
 
@@ -479,7 +461,7 @@ class DrawMap():
         map[0,0]=0 
         map[self.graph.height-1,self.graph.width-1]=0
 
-        fig, (ax, ax2) = plt.subplots(figsize=(8,8))
+        fig, ax = plt.subplots(figsize=(8,8))
         fig.subplots_adjust(bottom=0.15)
         #ax.set_title(style['title'], pad = 30)
         self.ax.set_title(self.title, pad = 30)
@@ -635,7 +617,7 @@ def main():
             print('        1: Breadth-First, 2: Dijkstra,  3. A* search')
             sys.exit(1)   
 
-    world_no = 6 # 7 5
+    world_no = 5 # 7 5
  
     try:
         path_planning = PathPlanning(world_no, method) 
