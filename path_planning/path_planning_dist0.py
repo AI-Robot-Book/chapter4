@@ -168,7 +168,7 @@ class PathPlanning:
             self.width = 42        # width of the grid world
             self.height = 25        # height of the grid world    
             self.start = (4, 12)    # start point
-            self.goal = (23, 7)    # goal point        
+            self.goal = (35, 7)    # goal point        
             self.DIAGRAM_WALLS = [] 
             thresh = 0.8           
             seed = 8
@@ -208,8 +208,10 @@ class DrawMap():
 
         self.fig, self.ax = plt.subplots(figsize=(8, 8))
         self.fig.subplots_adjust(bottom=0.15)
-        self.ax.text(start[0],start[1], 'S', va='center', ha='center',fontsize=32)
-        self.ax.text(goal[0],goal[1], 'G', va='center', ha='center',fontsize=32)
+        #self.ax.text(start[0],start[1], 'S', va='center', ha='center',fontsize=32)
+        #self.ax.text(goal[0],goal[1], 'G', va='center', ha='center',fontsize=32)
+        self.ax.text(start[0],start[1], 'S', va='center', ha='center')
+        self.ax.text(goal[0],goal[1], 'G', va='center', ha='center')
   
     def set_value(self, id, current):
         tile = self.draw_tile(id)
@@ -217,20 +219,20 @@ class DrawMap():
         bad_value = 1000000
         if tile == 'S':  # スタート
             print('start')
-            self.map[id[1], id[0]] = bad_value
+            self.map[id[0], id[1]] = bad_value
         elif tile == 'G':  # ゴール
             print('goal')
-            self.map[id[1], id[0]] = bad_value # 200
+            self.map[id[0], id[1]] = bad_value # 200
         elif tile == '#':  # obstacles
-            self.map[id[1], id[0]] = -100 # 1000 # 200
+            self.map[id[0], id[1]] = -100 # 1000 # 200
         else:
             # self.steps += 1
-            if self.map[id[1],id[0]] == 0: # not visited, not in closed cells 
-                    self.map[id[1],id[0]] = self.map[current[1],current[0]] + 1
-                    tile = str(self.map[id[1],id[0]])  
+            if self.map[id[0],id[1]] == 0: # not visited, not in closed cells 
+                    self.map[id[0],id[1]] = self.map[current[0],current[1]] + 1
+                    tile = str(self.map[id[0],id[1]])  
                   
-        if flag:
-            self.ax.text(id[0],id[1], tile, va='center', ha='center',fontsize=32)
+        #if flag:
+        #    self.ax.text(id[0],id[1], tile, va='center', ha='center',fontsize=32)
               
     def draw_tile(self, id): 
         #r = r"$\cdot$"
@@ -249,9 +251,11 @@ class DrawMap():
 
     def draw_obstacles_path(self, path):
         #for id1 in self.DIAGRAM_WALLS:
+        """
         for id1 in self.graph.walls: 
             r1 = '#'
             self.ax.text(id1[0],id1[1], r1, va='center', ha='center',fontsize=32)
+        """
         
         self.path_length = len(path)
         self.title += ' (' + str(self.path_length-1) + ' steps)'
@@ -272,11 +276,14 @@ class DrawMap():
         
         for id in path: # paint yellow
             if id != self.start and id != self.goal:
-                self.map[id[1], id[0]] = bad_value # comment out demu for book
+                pass
+                #self.map[id[1], id[0]] = bad_value # comment out demu for book
                 #self.map[id[1], id[0]] = 10  # for book
         
-        self.map[self.start] = 1001
-        self.map[self.goal] = 1001
+        #self.map[self.start] = 1001
+        #self.map[self.goal] = 1001
+        self.map[self.start[1],self.start[0]] = 1001
+        self.map[self.goal[1],self.goal[0]] = 1001
 
         
 
@@ -294,6 +301,7 @@ class DrawMap():
         visit_order = dict()
         print(f'closed_cells')
         # for book
+        """
         order = 0
         for cell in closed_cells.keys():
             visit_order[cell] = order
@@ -304,7 +312,7 @@ class DrawMap():
                     fontsize=32, bbox=dict(facecolor='none', edgecolor='black',boxstyle="circle"))
             # print(f'{key}')
             order += 1
-        
+        """
 
         print(f'visit_order={visit_order}')
 
@@ -330,13 +338,13 @@ class DrawMap():
         self.ax.get_xaxis().set_tick_params(pad=12)
         self.ax.get_yaxis().set_tick_params(pad=12)
         
-        self.ax.set_xlabel('X', fontsize=40, labelpad=-30)
-        self.ax.xaxis.set_label_coords(1.0, -0.05)
-        self.ax.set_ylabel('Y', loc='top', fontsize=40, labelpad=0, rotation=0)
-        self.ax.yaxis.set_label_coords(-0.05, 0.95)
+        #self.ax.set_xlabel('X', fontsize=40, labelpad=-30)
+        #self.ax.xaxis.set_label_coords(1.0, -0.05)
+        #self.ax.set_ylabel('Y', loc='top', fontsize=40, labelpad=0, rotation=0)
+        #self.ax.yaxis.set_label_coords(-0.05, 0.95)
         #plt.xlabel("x", fontsize=32)
         #plt.ylabel("y", fontsize=32)
-        plt.tick_params(labelsize=24)
+        #plt.tick_params(labelsize=24)
         plt.show()
 
 

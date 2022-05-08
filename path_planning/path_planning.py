@@ -60,9 +60,12 @@ class SquareGrid:
     def neighbors(self, id):
         (x, y) = id
         # Visitting order of neighbors that change the pass
-        neighbors = [(x+1, y), (x, y+1), (x-1, y), (x, y-1),  # demu 8 directions
-                    (x-1, y-1), (x-1, y+1), (x+1, y-1), (x+1, y+1)]  # 
-
+        # 8 neighbors
+        #neighbors = [(x+1, y), (x, y+1), (x-1, y), (x, y-1),  # demu 8 directions
+        #            (x-1, y-1), (x-1, y+1), (x+1, y-1), (x+1, y+1)]  # 
+        
+        # 4 neghbors
+        neighbors = [(x+1, y), (x, y+1), (x-1, y), (x, y-1)] # ENWS
         #neighbors = [(x+1, y), (x+1, y+1), (x, y+1), (x-1, y+1), 
         #             (x-1, y), (x-1, y-1), (x, y-1), (x+1, y-1)]  # 
         # demu counter clockwise
@@ -116,10 +119,10 @@ class PathPlanning:
             self.title = '幅優先探索'
             breadth_first_search(self.graph, self.start, self.goal, self.title)
         elif method == 2:  # Dijkstra
-            self.title = 'ダイクストラ法'
+            self.title = 'ダイクストラ探索'
             dijkstra_search(self.graph, self.start, self.goal, self.title) 
         elif method == 3:  # A*
-            self.title = 'A*アルゴリズム'
+            self.title = 'A*探索'
             a_star_search(self.graph, self.start, self.goal, self.title)
 
     def make_grid_world(self):
@@ -223,11 +226,11 @@ class PathPlanning:
         elif self.world_no == 8:
             self.width = 42        # width of the grid world
             self.height = 42        # height of the grid world    
-            self.start = (5, 18)    # start point
-            self.goal = (26, 24)    # goal point        
+            self.start = (10, 21)    # 15 21start point
+            self.goal = (32, 10)    # 35,10goal point        
             self.DIAGRAM_WALLS = [] 
-            thresh = 0.7            
-            seed = 8
+            thresh = 0.8            
+            seed = 11
             random.seed(seed)      
             for i in range(self.width):
                 for j in range(self.height):
@@ -238,9 +241,29 @@ class PathPlanning:
                         self.DIAGRAM_WALLS.append((i, j))
             self.DIAGRAM_DESERT = []
             self.WEIGHTS = {loc: 1 for loc in self.DIAGRAM_DESERT}
+        elif self.world_no == 9:
+            self.width = 42        # width of the grid world
+            self.height = 25        # height of the grid world    
+            self.start = (4, 12)    # start point
+            self.goal = (35, 7)    # goal point        
+            self.DIAGRAM_WALLS = [] 
+            thresh = 0.8           
+            seed = 8
+            random.seed(seed)      
+            for i in range(self.width):
+                for j in range(self.height):
+                    if (i,j) == self.start or (i,j) == self.goal:
+                        continue
+                    if (i == 0 or j == 0 or
+                        i == self.width-1 or j == self.height-1):
+                            self.DIAGRAM_WALLS.append((i, j))
+                    elif (random.random() > thresh):
+                        self.DIAGRAM_WALLS.append((i, j))
+            self.DIAGRAM_DESERT = []
+            self.WEIGHTS = {loc: 1 for loc in self.DIAGRAM_DESERT}
         else:
             print("Error: wrong world number")
-        
+                
         self.graph = GridWithWeights(self.width, self.height)  # demu
         #self.graph = SquareGrid(self.width, self.height)
         self.graph.walls = self.DIAGRAM_WALLS  
@@ -386,7 +409,7 @@ class DrawMap():
                 # plt.annotate(r3, (x1+0.2,y1+0.4))
                 #plt.annotate(r3, (x1,y1),va='center', ha='center')
                 #plt.text(x1,y1,r3, va='center', ha='center')
-                plt.text(x1+0.5,y1+0.5,r3, va='center', ha='center')
+                plt.text(x1+0.5,y1+0.5,r3, va='center', ha='center') # comment out demu demu
 
     # Paint the tile
     def paint_tile(self,path,closed_cells):     
@@ -461,7 +484,7 @@ class DrawMap():
         self.ax.text(goal[0]+0.5,goal[1]+0.5, 'G', va='center', ha='center')
         for id in closed_cells: 
             print(f'map={self.map[id[1],id[0]]}')
-            self.ax.text(id[0]+0.5,id[1]+0.5, str(self.map[id[1],id[0]]), va='center', ha='center')
+            #self.ax.text(id[0]+0.5,id[1]+0.5, str(self.map[id[1],id[0]]), va='center', ha='center')
             
 
         #self.ax.text(start[0],start[1], 'S')
@@ -547,7 +570,8 @@ def heuristic(a: GridLocation, b: GridLocation) -> float:
     (x2, y2) = b
     # return abs(x1 - x2) + abs(y1 - y2)
     # return math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
-    return math.hypot(x1 - x2, y1 - y2)
+    #return math.hypot(x1 - x2, y1 - y2)
+    return abs(x1 - x2) + abs(y1 - y2)
 
 
 def breadth_first_search(graph, start, goal, title):
@@ -645,7 +669,7 @@ def main():
             print('        1: Breadth-First, 2: Dijkstra,  3. A* search')
             sys.exit(1)   
 
-    world_no = 5 # 7 5
+    world_no = 5 # 8 9 8 7 5
  
     try:
         path_planning = PathPlanning(world_no, method) 
