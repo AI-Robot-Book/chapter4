@@ -11,4 +11,16 @@ ROS2とPythonで作って学ぶAIロボット入門（出村・萩原・升谷�
 - **path_planning**: 経路計画のサンプルプログラム
 - **waypoint_navi**: ウェイポイントナビゲーションのサンプルパッケージ
 
+## インストール
+Chapter4の全パッケージを以下のコマンドでインストールします．
+- ROSのワークスペースを`~/airobot_ws`とする．
+  ```
+  cd ~/airobot_ws/src
+  ```
+
+- Chapter4のリポジトリを入手
+  ```
+  git clone https://github.com/AI-Robot-Book/chapter2
+  ```
+
 ## 補足情報
