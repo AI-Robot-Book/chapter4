@@ -24,5 +24,5 @@ Chapter4の全パッケージを以下のコマンドでインストールしま
   ```
 
 ## 補足情報
-- ナビゲーション関連のサンプルプログラムを実行するときは，以下の説明に従って事前に地図ファイルをインストールしてください．
- -- [https://github.com/AI-Robot-Book/chapter4/tree/main/map](https://github.com/AI-Robot-Book/chapter4/tree/main/map) 
+- ナビゲーション関連のサンプルプログラムを実行するときは，以下の説明に従って事前に地図ファイルをインストールしてください．  
+  - [https://github.com/AI-Robot-Book/chapter4/tree/main/map](https://github.com/AI-Robot-Book/chapter4/tree/main/map) 
