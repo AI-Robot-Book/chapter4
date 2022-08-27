@@ -20,7 +20,7 @@ Chapter4の全パッケージを以下のコマンドでインストールしま
 
 - Chapter4のリポジトリを入手
   ```
-  git clone https://github.com/AI-Robot-Book/chapter2
+  git clone https://github.com/AI-Robot-Book/chapter4
   ```
 
 ## 補足情報
