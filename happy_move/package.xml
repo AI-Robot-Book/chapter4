@@ -3,7 +3,7 @@
 <package format="3">
   <name>happy_move</name>
   <version>1.0.0</version>
-  <description>A happy mobr package</description>
+  <description>A happy move package</description>
   <maintainer email="ai-robot-book@googlegroups.com">Kosei Demura</maintainer>
   <license>Apache License 2.0</license>
   
