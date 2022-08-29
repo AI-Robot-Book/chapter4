@@ -31,4 +31,4 @@ Copyright (c) 2022, Kosei Demura All rights reserved. This project is licensed u
 
 
 ## 参考文献
-- 今のところなし．
+- 今のところありません．
