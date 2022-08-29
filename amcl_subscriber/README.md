@@ -5,11 +5,32 @@
 
 
 ## インストール
-インストール方法を書く．
+Chapter4のパッケージは全部まとめてインストール・ビルドをします．
+- [第4章 インストール](https://github.com/AI-Robot-Book/chapter4)を参照してください．
 
 
 ## 実行
-実行方法を書く．
+端末2を3分割して，上の端末で以下のコマンドでシミュレータを起動
+```
+cd ~/airobot_ws
+source install/setup.bash
+ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py  
+```
+
+中の端末で以下のコマンドを実行
+```
+cd ~/airobot_ws
+source install/setup.bash
+ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True map:=$HOME/map/
+house.yaml
+```
+
+下の端末で以下のコマンドを実行してロボットを移動させ，トピックの値を確認する．
+```
+cd ~/airobot_ws
+source install/setup.bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
 
 
 ## ヘルプ
