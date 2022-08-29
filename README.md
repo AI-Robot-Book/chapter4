@@ -3,13 +3,13 @@
 ROS2とPythonで作って学ぶAIロボット入門（出村・萩原・升谷・タン著，講談社）第４章のサンプルプログラムと補足情報などを掲載しています．
 
 ## ディレクトリ構成
-- **amcl_subscriber**: /amclをサブスクライブするパッケージ
-- **happy_lidar**: シンプルなLidarパッケージとドアオープンのサンプル
-- **happy_move**: シンプルな移動パッケージ
-- **happy_teleop**: 自作遠隔操作パッケー
-- **map**: 地図ファイルを格納するディレクトリ
-- **path_planning**: 経路計画のサンプルプログラム
-- **waypoint_navi**: ウェイポイントナビゲーションのサンプルパッケージ
+- **[amcl_subscriber](amcl_subscriber)**: /amclをサブスクライブするパッケージ
+- **[happy_lidar](happy_lidar)**: シンプルなLidarパッケージとドアオープンのサンプル
+- **[happy_move](happy_move)**: シンプルな移動パッケージ
+- **[happy_teleop](happy_teleop)**: 自作遠隔操作パッケー
+- **[map](map)**: 地図ファイルを格納するディレクトリ
+- **[path_planning](path_planning)**: 経路計画のサンプルプログラム
+- **[waypoint_navi](waypoint_navi)**: ウェイポイントナビゲーションのサンプルパッケージ
 
 ## インストール
 Chapter4の全パッケージを以下のコマンドでインストールします．
