@@ -4,7 +4,7 @@ package_name = 'amcl_subscriber'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='1.0.0',
     packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -13,10 +13,10 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='mini',
-    maintainer_email='tenkose@hotmail.com',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    maintainer='Kosei Demura',
+    maintainer_email='ai-robot-book@googlegroups.com',
+    description='A amcl subscriber package',
+    license='Apache License 2.0', 
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
