@@ -7,7 +7,7 @@
 ## インストール
 書籍の説明ではmapディレクトリは$HOME/mapのパスになっているので次のコマンドでファイルをコピーします．
 ```
-cp -r ~/airobot_ws/src/chapter4/src/map ~
+cp -r ~/airobot_ws/src/chapter4/map ~
 ```
 
 ## ヘルプ
