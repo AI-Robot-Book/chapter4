@@ -3,7 +3,7 @@
 ROS2とPythonで作って学ぶAIロボット入門（出村・萩原・升谷・タン著，講談社）第４章のサンプルプログラムと補足情報などを掲載しています．
 
 ## サンプルプログラムのバグ
-- Happy miniのモデルファイルにバグがあり，LiDARのレーザ光と台車カバーが干渉するためナビゲーションに失敗します．モデルファイルを修正しましたので，リンクのファイルを元のファイル(~/airobot_ws/src/happy_mini_turtlebot3_sim/turtlebot3_gazebo/models/turtlebot3_happy_mini/model.sdf)に上書きしてからcolcon buildしてください．お手数をおかけしてすみません．なお，書籍の変更はありません．
+- 2022-10-5: Happy miniのモデルファイルにバグがあり，LiDARのレーザ光と台車カバーが干渉するためナビゲーションに失敗します．モデルファイルを修正しましたので，リンクのファイルを元のファイル(~/airobot_ws/src/happy_mini_turtlebot3_sim/turtlebot3_gazebo/models/turtlebot3_happy_mini/model.sdf)に上書きしてからcolcon buildしてください．お手数をおかけしてすみません．なお，書籍の変更はありません．
   - https://github.com/AI-Robot-Book/happy_mini_turtlebot3_sim/blob/main/turtlebot3_gazebo/models/turtlebot3_happy_mini/model.sdf
 
 ## ディレクトリ構成
