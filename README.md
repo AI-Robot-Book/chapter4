@@ -8,7 +8,7 @@ ROS2とPythonで作って学ぶAIロボット入門（出村・萩原・升谷�
 リンクのファイルを元のファイル(~/airobot_ws/src/happy_mini_turtlebot3_sim/turtlebot3_gazebo/models/turtlebot3_happy_mini/model.sdf)に上書きするために次のコマンドを実行してcolcon buildしてください．お手数をおかけしてすみません．なお，書籍の変更はありません．  
   ```
   cd ~/airobot_ws/src/happy_mini_turtlebot3_sim  
-  git clone  
+  git pull  
   cd ~/airobot_ws  
   colcon build
   ```
